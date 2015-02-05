@@ -357,29 +357,27 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
-      var cache = {};
-      return function(arg){
-        if(arg in cache) {
-          console.log('Cache hit for '+arg);
-          return cache[arg];
-        } 
-        else {
-        console.log('Cache miss for '+arg);
-        return cache[arg] = func(arg);
-        }  
+    var cache = {};
+    return function(){
+      var key = Array.prototype.slice.call(arguments, 0, arguments.length).toString();
+      if(cache[key] == undefined){
+        cache[key] = func.apply(this, arguments);
       }
+      return cache[key];
     };
-
+  };
   // Delays a function for the given number of milliseconds, and then calls
   // it with the arguments supplied.
   //
   // The arguments for the original function are passed after the wait
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
-  _.delay = function(func, wait,a ,b) {
-    setTimeout( func(a,b),wait);
+  _.delay = function(func, wait) {
+    var args = Array.prototype.slice.call(arguments, 2, arguments.length);
+    return setTimeout(function(){
+      return func.apply(this, args);
+    }, wait);
   };
-
 
   /**
    * ADVANCED COLLECTION OPERATIONS
